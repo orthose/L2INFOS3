@@ -1,0 +1,2 @@
+module tp_kmoyenne {
+}
