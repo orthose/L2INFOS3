@@ -3,11 +3,12 @@ package partitionnement;
 import java.util.Arrays;
 
 /**
- * @apiNote Algorithme des k-moyennes
+ * @apiNote Algorithme des k-moyennes.
+ * 
  * @author Maxime Vincent
  * @version 14/11/19
  */
-public class Kmeans {
+public class Kmeans implements LearningAlgorithmKmeans {
 	
 	// Attributs
 	private double[][] data; // Données
@@ -84,7 +85,7 @@ public class Kmeans {
 		// Parcours de tous les points
 		for (int indexData = 0; indexData < this.numberData; indexData++) {
 			
-			double minimumDistance = this.distance(this.data[indexData], this.data[0]);
+			double minimumDistance = this.distance(this.data[indexData], this.centre[0]);
 			int assignedCentre = 0;
 			
 			// Parcours de tous les centres
@@ -150,7 +151,7 @@ public class Kmeans {
 	/**
 	 * @apiNote Démarre l'apprentissage
 	 * @param minMoveDistance Distance minimale de déplacement des centres
-	 * @param maxIteration Nombre d'itération maximum
+	 * @param maxIteration Nombre d'itérations maximum
 	 */
 	public void runLearning(double minMoveDistance, int maxIteration) {
 		
