@@ -11,13 +11,13 @@ import java.util.Arrays;
 public class Kmeans implements LearningAlgorithmKmeans {
 	
 	// Attributs
-	private double[][] data; // Données
-	private int[] dataCentre; // Centres associés aux données
-	private double[][] centre; // Centres
-	private int dimension; // Dimension des points
-	private int numberData; // Nombre de données
-	private int numberCentre; // Nombre de centres
-	private boolean learningState; // Etat de l'apprentissage
+	protected double[][] data; // Données
+	protected int[] dataCentre; // Centres associés aux données
+	protected double[][] centre; // Centres
+	protected int dimension; // Dimension des points
+	protected int numberData; // Nombre de données
+	protected int numberCentre; // Nombre de centres
+	protected boolean learningState; // Etat de l'apprentissage
 	
 	// Constructeurs
 	public Kmeans(double[][] data, int numberCentre) {
@@ -175,8 +175,20 @@ public class Kmeans implements LearningAlgorithmKmeans {
 		}
 	}
 	
+	/**
+	 * @apiNote Démarre l'apprentissage
+	 * @param minMoveDistance Distance minimale de déplacement des centres
+	 */
 	public void runLearning(double minMoveDistance) {
 		this.runLearning(minMoveDistance, 1000000);
+	}
+	
+	/**
+	 * @apiNote Démarre l'apprentissage
+	 * @param maxIteration Nombre d'itérations maximum
+	 */
+	public void runLearning(int maxIteration) {
+		this.runLearning(0.001, maxIteration);
 	}
 	
 	/**

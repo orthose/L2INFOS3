@@ -64,35 +64,12 @@ public interface LearningAlgorithmKmeans {
 	public void setCentre(double[][] centre);
 	
 	/**
-	 * @apiNote Méthode d'assignation d'un centre
-	 * à chaque donnée, nécessaire à l'apprentissage.
-	 * On assigne à une donnée son centre le plus proche.
-	 */
-	private void assignCentre() {
-	}
-	
-	/**
-	 * @apiNote Méthode de déplacement des centres,
-	 * nécessaire à l'apprentissage.
-	 * 
-	 * @return réel mesurant la ditance totale de
-	 * déplacement des centres
-	 */
-	private double moveCentre() {
-		return 0;
-	}
-	
-	/**
 	 * @apiNote Lance l'apprentissage automatiquement.
-	 * 
-	 * @param minMoveDistance: Distance minimale de déplacement des centres.
-	 * Lorsque la distance renseignée est inférieure à la distance
-	 * de déplacement des centres, l'apprentissage prend fin.
 	 * 
 	 * @param maxIteration: Nombre d'itérations maximum au-delà duquel
 	 * l'algorithme prend fin.
 	 */
-	public void runLearning(double minMoveDistance, int maxIteration);
+	public void runLearning(int maxIteration);
 	
 	/**
 	 * @apiNote Permet d'initialiser les centres
