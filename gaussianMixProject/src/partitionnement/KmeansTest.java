@@ -6,11 +6,11 @@ import java.io.IOException;
 public class KmeansTest {
 	
 	public static void simpleLearning() {
-		// creation d'un jeu de donnes simples pour tester l'algo
+		// Creation d'un jeu de donnes simples pour tester l'algo
 		System.out.println("Intialisation des données");
 
-		int D = 2; // deux dimensions
-		int k = 2; // deux centres
+		int D = 2; // Deux dimensions
+		int k = 2; // Deux centres
 		double[][] X = new double[6][D]; // 6 points en D dimensions
 		double[][] centre = new double[k][D];
 
@@ -19,7 +19,7 @@ public class KmeansTest {
 		centre[0][1] = 0;
 		centre[1][1] = 0;
 
-		// position des donnees
+		// Position des donnees
 		X[0][0] = -3;
 		X[0][1] = 1;
 		X[1][0] = -2.5;
@@ -48,7 +48,7 @@ public class KmeansTest {
 		kmoyenne.runLearning(epsilon);
 
 		System.out.println("Fin d'apprentissage");
-		// verification
+		// Verification
 		for (int i = 0; i < X.length; i++) {
 			System.out.println("Point " + i + " assigné à " + kmoyenne.getDataCentre()[i]);
 		}
@@ -58,7 +58,7 @@ public class KmeansTest {
 	}
 	
 	public static void simpleGaussianMixLearning() {
-		// creation d'un jeu de donnes simples pour tester l'algo
+		// Creation d'un jeu de donnes simples pour tester l'algo
 		System.out.println("Intialisation des données");
 
 		int D = 2; // deux dimensions
@@ -71,7 +71,7 @@ public class KmeansTest {
 		centre[0][1] = 0;
 		centre[1][1] = 0;
 
-		// position des donnees
+		// Position des donnees
 		X[0][0] = -3;
 		X[0][1] = 1;
 		X[1][0] = -2.5;
@@ -100,7 +100,7 @@ public class KmeansTest {
 		kmoyenne.runLearning(maxIteration);
 
 		System.out.println("Fin d'apprentissage");
-		// verification
+		// Verification
 		System.out.println(kmoyenne);
 		for (int i = 0; i < X.length; i++) {
 			System.out.println("Point " + i + " assigné à " + kmoyenne.answer(i));
@@ -108,7 +108,7 @@ public class KmeansTest {
 	}
 	
 	public static void gaussianLearning() throws IOException {
-		// creation d'un jeu de donnes simples pour tester l'algo
+		// Creation d'un jeu de donnes simples pour tester l'algo
 		System.out.println("Intialisation des données");
 		
 		int k = 4; // deux centres
@@ -140,7 +140,7 @@ public class KmeansTest {
 		kmoyenne.runLearning(epsilon);
 		
 		System.out.println("Fin d'apprentissage");
-		// verification
+		// Verification
 		for (int i = 0; i < N; i++) {
 			System.out.println("Point " + i + " assigné à " + kmoyenne.getDataCentre()[i]);
 		}
