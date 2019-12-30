@@ -62,15 +62,28 @@ public class KmeansTest {
 		System.out.println("Intialisation des données");
 
 		int D = 2; // deux dimensions
-		int k = 2; // deux centres
+		int K = 2; // deux centres
 		double[][] X = new double[6][D]; // 6 points en D dimensions
-		double[][] centre = new double[k][D];
-
+		double[][] centre = new double[K][D]; // Centres ou moyenne des gaussiennes
+		double[][] deviation = new double[K][D]; // Variance des gaussiennes
+		double[] density = new double[K]; // Densité des gaussiennes
+		
+		// Initialisation des centres
 		centre[0][0] = -1;
 		centre[1][0] = 1;
 		centre[0][1] = 0;
 		centre[1][1] = 0;
-
+		
+		// Initialisation de la variance
+		deviation[0][0] = 0.5;
+		deviation[0][1] = 0.5;
+		deviation[1][0] = 0.5;
+		deviation[1][1] = 0.5;
+		
+		// Initialisation de la densité
+		density[0] = 1. / (double)K;
+		density[1] = 1. / (double)K;
+		
 		// position des donnees
 		X[0][0] = -3;
 		X[0][1] = 1;
@@ -86,17 +99,19 @@ public class KmeansTest {
 		X[5][1] = -1;
 
 		System.out.println("Construction d'un kmoyenne de mixture de gaussiennes");
-		KmeansGaussianMix kmoyenne = new KmeansGaussianMix(X, k);
+		KmeansGaussianMix kmoyenne = new KmeansGaussianMix(X, K);
 
 		System.out.println(kmoyenne);
 
 		System.out.println("Initialisation de la mixture de gaussiennes");
-		// TO DO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		kmoyenne.setCentre(centre);
+		kmoyenne.setDensity(density);
+		kmoyenne.setDeviation(deviation);
 
 		System.out.println(kmoyenne);
 
 		System.out.println("Apprentissage lancé");
-		int maxIteration = 100;
+		int maxIteration = 10;
 		kmoyenne.runLearning(maxIteration);
 
 		System.out.println("Fin d'apprentissage");
@@ -127,7 +142,7 @@ public class KmeansTest {
 		System.out.println(kmoyenne);
 		
 		System.out.println("Initialisation des centres");
-		kmoyenne.initialiseCentre();
+		kmoyenne.initialise();
 		
 		// Cela ne dérange pas apparemment
 		double[][] temp = kmoyenne.getCentre();

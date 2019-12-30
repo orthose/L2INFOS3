@@ -72,8 +72,10 @@ public interface LearningAlgorithmKmeans {
 	public void runLearning(int maxIteration);
 	
 	/**
-	 * @apiNote Permet d'initialiser les centres
-	 * avant apprentissage.
+	 * @apiNote Permet d'initialiser automatiquement les 
+	 * paramètres de l'algorithme avant apprentissage 
+	 * (comme les centres par exemple). Autrement, il faut
+	 * les initialiser manuellement avec des setters spécifiques.
 	 */
-	public void initialiseCentre();
+	public void initialise();
 }

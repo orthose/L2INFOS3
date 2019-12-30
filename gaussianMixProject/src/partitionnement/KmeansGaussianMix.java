@@ -7,9 +7,12 @@ import java.util.Arrays;
  * amélioré par la mixture de gaussiennes.
  * 
  * @author Maxime Vincent
- * @version 14/11/19
+ * @version 30/12/19
  */
 public class KmeansGaussianMix extends Kmeans {
+	
+	// Constantes
+	private final double orderOfMagnitude = 0.5; // Ordre de grandeur des données à modifier en fonction du jeu de données
 	
 	// Attributs
 	private double[][] dataGaussian; // Probabilité d'appartenir à une gaussienne pour chaque donnée
@@ -25,8 +28,8 @@ public class KmeansGaussianMix extends Kmeans {
 		super.dataCentre = null;
 		// Initialisation des attributs spécifiques
 		this.dataGaussian = new double[super.numberData][numberCentre];
-		this.mean = new double[super.dimension][numberCentre];
-		this.deviation = new double[super.dimension][numberCentre];
+		this.mean = super.centre; // On renomme le tableau par sourci de clarté
+		this.deviation = new double[numberCentre][super.dimension];
 		this.density = new double[numberCentre];
 		this.probabilitySumGaussian = new double[numberCentre];
 	}
@@ -44,6 +47,46 @@ public class KmeansGaussianMix extends Kmeans {
 	 */
 	public double[][] getDataGaussian() {
 		return this.dataGaussian;
+	}
+	
+	// Setters
+	@Override
+	/**
+	 * @apiNote Permet de modifier les coordonnées des centres
+	 * de chaque gaussienne (c'est-à-dire leur moyenne).
+	 * 
+	 * @param centre: Tableau de K centres des gaussiennes
+	 * contenant des tableaux de coordonnées de taille D
+	 */
+	public void setCentre(double[][] centre) {
+		if (centre.length != super.numberCentre || centre[0].length != super.dimension) {
+			throw new IllegalCallerException("Paramètres de setCentre() invalides");
+		}
+		// Les centres correspondent à la moyenne de chaque gaussienne
+		this.mean = centre;
+	}
+	
+	/**
+	 * @param deviation: Tableau de K éléments contenant
+	 * des tableaux de D coordonnées et représentant les
+	 * écart-types ou la variance de chaque gaussienne
+	 */
+	public void setDeviation(double[][] deviation) {
+		if (deviation.length != super.numberCentre || deviation[0].length != super.dimension) {
+			throw new IllegalCallerException("Paramètres de setCentre() invalides");
+		}
+		this.deviation = deviation;
+	}
+	
+	/**
+	 * @param density: Tableau de taille K contenant
+	 * les densités associées à chaque gaussienne
+	 */
+	public void setDensity(double[] density) {
+		if (density.length != super.numberCentre) {
+			throw new IllegalCallerException("Paramètres de setCentre() invalides");
+		}
+		this.density = density;
 	}
 	
 	/**
@@ -96,7 +139,7 @@ public class KmeansGaussianMix extends Kmeans {
 		double somme = 0;
 		// Parcours des données
 		for (int indexData = 0; indexData < super.numberData; indexData++) {
-			somme += this.dataGaussian[indexData][indexGaussian] * Math.pow(super.data[indexData][indexCoordinate] - this.mean[indexCoordinate][indexGaussian], 2);
+			somme += this.dataGaussian[indexData][indexGaussian] * Math.pow(super.data[indexData][indexCoordinate] - this.mean[indexGaussian][indexCoordinate], 2);
 		}
 		return (double)somme / (double)this.probabilitySumGaussian[indexGaussian];
 	}
@@ -132,8 +175,8 @@ public class KmeansGaussianMix extends Kmeans {
 			// Parcours des coordonnées
 			for (int indexCoordinate = 0; indexCoordinate < super.dimension; indexCoordinate++) {
 				// Calcul du produit au dénominateur
-				double factor1 = 1. / Math.sqrt(2 * Math.PI * this.deviation[indexCoordinate][indexGaussianDenominator]);
-				double factor2 = Math.exp(- Math.pow(super.data[indexData][indexCoordinate] - this.mean[indexData][indexGaussianDenominator], 2) / (2 * this.deviation[indexCoordinate][indexGaussianDenominator]));
+				double factor1 = 1. / Math.sqrt(2 * Math.PI * this.deviation[indexGaussianDenominator][indexCoordinate]);
+				double factor2 = Math.exp(- Math.pow(super.data[indexData][indexCoordinate] - this.mean[indexGaussianDenominator][indexCoordinate], 2) / (2 * this.deviation[indexGaussianDenominator][indexCoordinate]));
 				productDenominator *= (factor1 * factor2); 
 				// Calcul du produit au numérateur
 				if (indexGaussian == indexGaussianDenominator) {
@@ -175,8 +218,8 @@ public class KmeansGaussianMix extends Kmeans {
 		// des tableaux de même format)
 		for (int indexCoordinate = 0; indexCoordinate < super.dimension; indexCoordinate++) {
 			for (int indexGaussian = 0; indexGaussian < super.numberCentre; indexGaussian++) {
-				this.mean[indexCoordinate][indexGaussian] = this.mean(indexGaussian, indexCoordinate);
-				this.deviation[indexCoordinate][indexGaussian] = this.deviation(indexGaussian, indexCoordinate);
+				this.mean[indexGaussian][indexCoordinate] = this.mean(indexGaussian, indexCoordinate);
+				this.deviation[indexGaussian][indexCoordinate] = this.deviation(indexGaussian, indexCoordinate);
 			}
 		}
 		// Mise à jour de la densité
@@ -266,7 +309,21 @@ public class KmeansGaussianMix extends Kmeans {
 		return resultat;
 	}
 	
-	
+	@Override
+	public void initialise() {
+		// Initialisation des centres de gaussiennes
+		super.initialise();
+		// Parcours des centres
+		double density = 1. / (double)super.numberCentre;
+		for (int indexCentre = 0; indexCentre < super.numberCentre; indexCentre++) {
+			// Initialisation de la densité
+			this.density[indexCentre] = density;
+			// Initialisation de la variance
+			for (int indexCoordinate = 0; indexCoordinate < super.dimension; indexCoordinate++) {
+				this.deviation[indexCentre][indexCoordinate] = orderOfMagnitude;
+			}
+		}
+	}
 }
 
 

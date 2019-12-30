@@ -55,7 +55,7 @@ public class Kmeans implements LearningAlgorithmKmeans {
 	}
 
 	public void setCentre(double[][] centre) {
-		if (centre.length == 0 || centre[0].length != this.dimension) {
+		if (centre.length != this.numberCentre || centre[0].length != this.dimension) {
 			throw new IllegalCallerException("Paramètres de setCentre() invalides");
 		}
 		this.centre = centre;
@@ -194,7 +194,7 @@ public class Kmeans implements LearningAlgorithmKmeans {
 	/**
 	 * @apiNote Initialise aléatoirement les centres avant un nouvel apprentissage
 	 */
-	public void initialiseCentre() {
+	public void initialise() {
 		
 		// Bornes de l'espace considéré
 		double[] maxCoordData = new double[this.dimension];
