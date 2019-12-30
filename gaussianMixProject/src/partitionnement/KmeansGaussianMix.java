@@ -169,9 +169,6 @@ public class KmeansGaussianMix extends Kmeans {
 		double sumDenominator = 0;
 		// Parcours des gaussiennes
 		for (int indexGaussianDenominator = 0; indexGaussianDenominator < super.numberCentre; indexGaussianDenominator++) {
-			// Calcul de la somme du dénominateur
-			sumDenominator += this.density[indexGaussianDenominator] * productDenominator;
-			productDenominator = 1;
 			// Parcours des coordonnées
 			for (int indexCoordinate = 0; indexCoordinate < super.dimension; indexCoordinate++) {
 				// Calcul du produit au dénominateur
@@ -180,9 +177,12 @@ public class KmeansGaussianMix extends Kmeans {
 				productDenominator *= (factor1 * factor2); 
 				// Calcul du produit au numérateur
 				if (indexGaussian == indexGaussianDenominator) {
-					productNumerator = productDenominator;
+					productNumerator *= (factor1 * factor2);
 				}
 			}
+			// Calcul de la somme du dénominateur
+			sumDenominator += this.density[indexGaussianDenominator] * productDenominator;
+			productDenominator = 1;
 		}
 		return (double)(this.density[indexGaussian] * productNumerator) / (double)sumDenominator;
 		
@@ -236,7 +236,7 @@ public class KmeansGaussianMix extends Kmeans {
 	 */
 	public void runLearning(int maxIteration) {
 		if (! super.learningState) {
-			for (int i = 0; i < maxIteration; ) {
+			for (int i = 0; i < maxIteration; i++) {
 				// Assignation des gaussiennes aux données
 				this.assignGaussian();
 				// Modification des paramètres de l'algorithme
@@ -252,6 +252,7 @@ public class KmeansGaussianMix extends Kmeans {
 	@Override
 	public String toString() {
 		
+		// Données
 		String dataString = "data={";
 		for (int indexData = 0; indexData < super.numberData; indexData++) {
 			dataString += "{";
@@ -268,7 +269,8 @@ public class KmeansGaussianMix extends Kmeans {
 		}
 		dataString += "}";
 		
-		String gaussianString = "gaussian={";
+		// Tableau d'assignement
+		String gaussianString = "dataGaussian={";
 		for (int indexData = 0; indexData < super.numberData; indexData++) {
 			gaussianString += "{";
 			for (int indexGaussian = 0; indexGaussian < super.numberCentre; indexGaussian++) {
@@ -284,9 +286,53 @@ public class KmeansGaussianMix extends Kmeans {
 		}
 		gaussianString += "}";
 		
+		// Position des centres des gaussiennes
+		String meanString = "mean={";
+		for (int indexGaussian = 0; indexGaussian < super.numberCentre; indexGaussian++) {
+			meanString += "{";
+			for (int indexCoordinate = 0; indexCoordinate < super.dimension; indexCoordinate++) {
+				meanString += this.mean[indexGaussian][indexCoordinate];
+				if (indexCoordinate + 1 != super.dimension) {
+					meanString += ",";
+				}
+			}
+			meanString += "}";
+			if (indexGaussian + 1 != super.numberCentre) {
+				meanString += ",";
+			}
+		}
+		meanString += "}";
+		
+		// Variance des gaussiennes
+		String deviationString = "deviation={";
+		for (int indexGaussian = 0; indexGaussian < super.numberCentre; indexGaussian++) {
+			deviationString += "{";
+			for (int indexCoordinate = 0; indexCoordinate < super.dimension; indexCoordinate++) {
+				deviationString += this.deviation[indexGaussian][indexCoordinate];
+				if (indexCoordinate + 1 != super.dimension) {
+					deviationString += ",";
+				}
+			}
+			deviationString += "}";
+			if (indexGaussian + 1 != super.numberCentre) {
+				deviationString += ",";
+			}
+		}
+		deviationString += "}";
+		
+		// Densité des gaussiennes
+		String densityString = "density= {";
+		for (int indexGaussian = 0; indexGaussian < super.numberCentre; indexGaussian++) {
+			densityString += this.density[indexGaussian];
+			if (indexGaussian + 1 != super.numberCentre) {
+				densityString += ",";
+			}
+		}
+		densityString += "}";
+		
 		String others = "dimension=" + super.dimension + "\n" + "numberData=" + super.numberData + "\n" + "numberGaussian=" + super.numberCentre + "\n" + "learningState=" + super.learningState;
 		
-		return dataString + "\n" + gaussianString + "\n" + others;
+		return dataString + "\n" + gaussianString + "\n" + meanString + "\n" + deviationString + "\n" + densityString + "\n" + others;
 	}
 	
 	/**
@@ -309,10 +355,28 @@ public class KmeansGaussianMix extends Kmeans {
 		return resultat;
 	}
 	
+	/**
+	 * @apiNote Initialise le tableau d'assignation
+	 * des données aux gaussiennes
+	 */
+	public void initialiseDataGaussian() {
+		// Assignation temporaire de l'ancien tableau d'assignation
+		super.dataCentre = new int[super.numberData];
+		super.assignCentre();
+		// Traduction de ce tableau avec le tableau d'assignaion pour gaussienne
+		for (int indexData = 0; indexData < super.numberData; indexData++) {
+			this.dataGaussian[indexData][super.dataCentre[indexData]] = 1.0;
+		}
+		// Suppression de l'ancien tableau
+		super.dataCentre = null;
+	}
+	
 	@Override
 	public void initialise() {
 		// Initialisation des centres de gaussiennes
 		super.initialise();
+		// Initialisation du tableau d'assignation
+		this.initialiseDataGaussian();
 		// Parcours des centres
 		double density = 1. / (double)super.numberCentre;
 		for (int indexCentre = 0; indexCentre < super.numberCentre; indexCentre++) {

@@ -75,10 +75,10 @@ public class KmeansTest {
 		centre[1][1] = 0;
 		
 		// Initialisation de la variance
-		deviation[0][0] = 0.5;
-		deviation[0][1] = 0.5;
-		deviation[1][0] = 0.5;
-		deviation[1][1] = 0.5;
+		deviation[0][0] = 1.5;
+		deviation[0][1] = 1.5;
+		deviation[1][0] = 1.5;
+		deviation[1][1] = 1.5;
 		
 		// Initialisation de la densité
 		density[0] = 1. / (double)K;
@@ -101,14 +101,15 @@ public class KmeansTest {
 		System.out.println("Construction d'un kmoyenne de mixture de gaussiennes");
 		KmeansGaussianMix kmoyenne = new KmeansGaussianMix(X, K);
 
-		System.out.println(kmoyenne);
+		System.out.println(kmoyenne + "\n");
 
 		System.out.println("Initialisation de la mixture de gaussiennes");
 		kmoyenne.setCentre(centre);
 		kmoyenne.setDensity(density);
 		kmoyenne.setDeviation(deviation);
+		kmoyenne.initialiseDataGaussian();
 
-		System.out.println(kmoyenne);
+		System.out.println(kmoyenne + "\n");
 
 		System.out.println("Apprentissage lancé");
 		int maxIteration = 10;
@@ -116,7 +117,7 @@ public class KmeansTest {
 
 		System.out.println("Fin d'apprentissage");
 		// verification
-		System.out.println(kmoyenne);
+		System.out.println(kmoyenne + "\n");
 		for (int i = 0; i < X.length; i++) {
 			System.out.println("Point " + i + " assigné à " + kmoyenne.answer(i));
 		}

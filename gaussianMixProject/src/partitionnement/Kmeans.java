@@ -80,7 +80,7 @@ public class Kmeans implements LearningAlgorithmKmeans {
 	/**
 	 * @apiNote Assigne à chaque point son centre le plus proche
 	 */
-	private void assignCentre() {
+	protected void assignCentre() {
 		
 		// Parcours de tous les points
 		for (int indexData = 0; indexData < this.numberData; indexData++) {
