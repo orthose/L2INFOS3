@@ -57,6 +57,56 @@ public class KmeansTest {
 		}
 	}
 	
+	public static void simpleGaussianMixLearning() {
+		// creation d'un jeu de donnes simples pour tester l'algo
+		System.out.println("Intialisation des données");
+
+		int D = 2; // deux dimensions
+		int k = 2; // deux centres
+		double[][] X = new double[6][D]; // 6 points en D dimensions
+		double[][] centre = new double[k][D];
+
+		centre[0][0] = -1;
+		centre[1][0] = 1;
+		centre[0][1] = 0;
+		centre[1][1] = 0;
+
+		// position des donnees
+		X[0][0] = -3;
+		X[0][1] = 1;
+		X[1][0] = -2.5;
+		X[1][1] = -0.5;
+		X[2][0] = -4;
+		X[2][1] = 0;
+		X[3][0] = 2;
+		X[3][1] = 2;
+		X[4][0] = 2.5;
+		X[4][1] = -0.5;
+		X[5][0] = 1.5;
+		X[5][1] = -1;
+
+		System.out.println("Construction d'un kmoyenne de mixture de gaussiennes");
+		KmeansGaussianMix kmoyenne = new KmeansGaussianMix(X, k);
+
+		System.out.println(kmoyenne);
+
+		System.out.println("Initialisation de la mixture de gaussiennes");
+		// TO DO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+		System.out.println(kmoyenne);
+
+		System.out.println("Apprentissage lancé");
+		int maxIteration = 100;
+		kmoyenne.runLearning(maxIteration);
+
+		System.out.println("Fin d'apprentissage");
+		// verification
+		System.out.println(kmoyenne);
+		for (int i = 0; i < X.length; i++) {
+			System.out.println("Point " + i + " assigné à " + kmoyenne.answer(i));
+		}
+	}
+	
 	public static void gaussianLearning() throws IOException {
 		// creation d'un jeu de donnes simples pour tester l'algo
 		System.out.println("Intialisation des données");
@@ -103,8 +153,12 @@ public class KmeansTest {
 		fw.close();
 		
 	}
+	
+	
 
 	public static void main(String[] args) throws IOException {
-		gaussianLearning();
+		//simpleLearning();
+		//gaussianLearning();
+		simpleGaussianMixLearning();
 	}
 }

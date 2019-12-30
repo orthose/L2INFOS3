@@ -206,5 +206,75 @@ public class KmeansGaussianMix extends Kmeans {
 		}
 	}
 	
+	@Override
+	public String toString() {
+		
+		String dataString = "data={";
+		for (int indexData = 0; indexData < super.numberData; indexData++) {
+			dataString += "{";
+			for (int dim = 0; dim < super.dimension; dim++) {
+				dataString += super.data[indexData][dim];
+				if (dim + 1 != super.dimension) {
+					dataString += ",";
+				}
+			}
+			dataString += "}";
+			if (indexData + 1 != super.numberData) {
+				dataString += ",";
+			}
+		}
+		dataString += "}";
+		
+		String gaussianString = "gaussian={";
+		for (int indexData = 0; indexData < super.numberData; indexData++) {
+			gaussianString += "{";
+			for (int indexGaussian = 0; indexGaussian < super.numberCentre; indexGaussian++) {
+				gaussianString += this.dataGaussian[indexData][indexGaussian];
+				if (indexGaussian + 1 != super.numberCentre) {
+					gaussianString += ",";
+				}
+			}
+			gaussianString += "}";
+			if (indexData + 1 != super.numberData) {
+				gaussianString += ",";
+			}
+		}
+		gaussianString += "}";
+		
+		String others = "dimension=" + super.dimension + "\n" + "numberData=" + super.numberData + "\n" + "numberGaussian=" + super.numberCentre + "\n" + "learningState=" + super.learningState;
+		
+		return dataString + "\n" + gaussianString + "\n" + others;
+	}
+	
+	/**
+	 * @apiNote Permet d'obtenir l'indice de la gaussienne
+	 * associée à l'indice d'une donnée.
+	 *  
+	 * @param indexData: Indice de la donnée dans [0 ; D[
+	 * 
+	 * @returnIndice de la gaussienne dans [0 ; K[
+	 */
+	public int answer(int indexData) {
+		double maximum = this.dataGaussian[indexData][0];
+		int resultat = 0;
+		for (int indexGaussian = 1; indexGaussian < super.numberCentre; indexGaussian++) {
+			if (this.dataGaussian[indexData][indexGaussian] > maximum) {
+				maximum = this.dataGaussian[indexData][indexGaussian];
+				resultat = indexGaussian;
+			}
+		}
+		return resultat;
+	}
+	
 	
 }
+
+
+
+
+
+
+
+
+
+
