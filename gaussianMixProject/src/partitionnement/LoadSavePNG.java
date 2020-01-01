@@ -27,13 +27,19 @@ public class LoadSavePNG {
 		return tabColor;
 	}
 
-	public static double[][] normaliseColor(Color[] tabColor) {
-		Color[] optimizedTabColor = colorOptimisation(tabColor);
-		double[][] normalizedColor = new double[optimizedTabColor.length][3];
-		for (int i = 0; i < optimizedTabColor.length; i++) {
-			normalizedColor[i][0] = optimizedTabColor[i].getRed() / 255f;
-			normalizedColor[i][1] = optimizedTabColor[i].getGreen() / 255f;
-			normalizedColor[i][2] = optimizedTabColor[i].getBlue() / 255f;
+	public static double[][] normaliseColor(Color[] tabColor, boolean optimisation) {
+		Color[] newColorTab;
+		if (optimisation) {
+			newColorTab = colorOptimisation(tabColor);
+		} else {
+			newColorTab = tabColor;
+		}
+
+		double[][] normalizedColor = new double[newColorTab.length][3];
+		for (int i = 0; i < newColorTab.length; i++) {
+			normalizedColor[i][0] = newColorTab[i].getRed() / 255f;
+			normalizedColor[i][1] = newColorTab[i].getGreen() / 255f;
+			normalizedColor[i][2] = newColorTab[i].getBlue() / 255f;
 		}
 
 		return normalizedColor;
@@ -123,7 +129,7 @@ public class LoadSavePNG {
 
 		// testImg(bui.getWidth(), bui.getHeight(), path, tabColor);
 
-		double[][] normalizedColor = normaliseColor(tabColor);
+		double[][] normalizedColor = normaliseColor(tabColor, true);
 
 		simpleGaussianMixLearning(normalizedColor);
 
@@ -193,7 +199,7 @@ public class LoadSavePNG {
 		// Initialisation de la variance
 		for (int i = 0; i < K; i++) {
 			for (int j = 0; j < D; j++) {
-				deviation[i][j] = 1.5;
+				deviation[i][j] = 0.5;
 			}
 		}
 
@@ -231,7 +237,7 @@ public class LoadSavePNG {
 		for (int i = 0; i < K; i++) {
 			System.out.println("Centre " + i + ": " + "  rouge: " + centre[i][0] + "  vert: " + centre[i][1] + "  bleu: " + centre[i][2]);
 		}
-		
+
 		System.out.println("\n" + "Affichage dénormalisé");
 
 		// Affichage dénormalisé
