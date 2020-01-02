@@ -28,9 +28,9 @@ public class Main {
 	 */
 	public static void main(String[] args) throws IOException {
 		//question1_centre();
-		question1_deviation();
+		//question1_deviation();
 		//question1_density();
-		//question1_iteration();
+		question1_iteration();
 		//compression();
 	}
 	
@@ -46,13 +46,13 @@ public class Main {
 	 */
 	public static void question1_centre() throws IOException {
 		// Chemin de l'image à analyser
-		String path = "./src/";
+		String path = "./src/image/";
 		String imageMMS = path + "mms.png";
 		
 		// Fichier de sauvegarde des scores à interpréter avec gnuplot
-		FileWriter fw = new FileWriter("question1_centregyg.d");
+		FileWriter fw = new FileWriter("question1_centre.d");
 		
-		System.out.println("Intialisation des données");
+		System.out.println("Initialisation des données");
 		
 		// Chargement de l'image
 		BufferedImage bui = ImageIO.read(new File(imageMMS));
@@ -119,17 +119,18 @@ public class Main {
 	 * @apiNote On effectue 10 apprentissages en faisant varier
 	 * l'écart-type initial des gaussiennes dans [0.05 ; 0.50].
 	 * Le but est de déterminer la meilleure valeur d'écart-type
-	 * pour le jeu de données en calculant le score de l'algorithme.
+	 * pour le jeu de données en calculant le score de l'algorithme
+	 * à chaque apprentissage.
 	 */
 	public static void question1_deviation() throws IOException {
 		// Chemin de l'image à analyser
-		String path = "./src/";
+		String path = "./src/image/";
 		String imageMMS = path + "mms.png";
 
 		// Fichier de sauvegarde des scores à interpréter avec gnuplot
 		FileWriter fw = new FileWriter("question1_deviation.d");
 
-		System.out.println("Intialisation des données");
+		System.out.println("Initialisation des données");
 
 		// Chargement de l'image
 		BufferedImage bui = ImageIO.read(new File(imageMMS));
@@ -199,6 +200,8 @@ public class Main {
 			
 			// On réinitialise le tableau d'assignement
 			kmoyenne.initialiseDataGaussian();
+			// On réinitialise la densité
+			kmoyenne.setDensity(1. / K);
 			// On incrémente 0.05 la variance
 			deviation += 0.05;
 			kmoyenne.setDeviation(deviation);		
@@ -210,21 +213,198 @@ public class Main {
 	}
 	
 	/**
-	 * 
+	 * On effectue 10 apprentissages en faisant varier la densité
+	 * initiale des 10 gaussiennes dans [1 / 10 ; 1 / 1].
+	 * Le but est de déterminer la meilleure valeur de la densité
+	 * pour le jeu de données en calculant le score de l'algorithme
+	 * à chaque apprentissage.
 	 */
-	public static void  question1_density() {
-		
+	public static void  question1_density() throws IOException {
+		// Chemin de l'image à analyser
+		String path = "./src/image/";
+		String imageMMS = path + "mms.png";
+
+		// Fichier de sauvegarde des scores à interpréter avec gnuplot
+		FileWriter fw = new FileWriter("question1_density.d");
+
+		System.out.println("Initialisation des données");
+
+		// Chargement de l'image
+		BufferedImage bui = ImageIO.read(new File(imageMMS));
+
+		// Récupération d'un tableau de couleur
+		Color[] tabColor = LoadSavePNG.loadPNG(bui);
+
+		// Extraction de couleur sous forme de donnée normalisée
+		double[][] normalizedColor = LoadSavePNG.normaliseColor(tabColor, false);
+
+		int D = 3; // Trois dimensions
+		int K = 10; // Dix centres
+		double[][] data = normalizedColor;
+
+		System.out.println("Construction d'un kmoyenne de mixture de gaussiennes");
+		KmeansGaussianMix kmoyenne = new KmeansGaussianMix(data, K);
+
+		// Initialisation des paramètres de l'algorithme
+		System.out.println("Initialisation de la mixture de gaussiennes");
+		// Initialisation des centres avec aléas (on gardera ces centres
+		// pour réinitialiser l'algorithme)
+		kmoyenne.initialise();
+		double[][] centre = new double[K][D];
+		for (int k = 0; k < K; k++) {
+			centre[k] = Arrays.copyOf(kmoyenne.getCentre()[k], kmoyenne.getCentre()[k].length);
+		}
+		// Initialisation de la densité à 1 / K
+		double density = 1. / (double)K;
+		kmoyenne.setDensity(density);
+		// Nombre d'itérations de l'apprentissage
+		int maxIteration = 20;
+
+		// Dix apprentissages consécutifs
+		for (int numberLearning = 0; numberLearning < 10; numberLearning++) {
+
+			System.out.println("Apprentissage " + numberLearning + " lancé");
+			kmoyenne.runLearning(maxIteration);
+
+			System.out.println("Fin d'apprentissage");
+
+			// Affichage pur
+			for (int indexCentre = 0; indexCentre < K; indexCentre++) {
+				System.out.println("Centre " + indexCentre + ": " + "  rouge: " + kmoyenne.getCentre()[indexCentre][0]
+						+ "  vert: " + kmoyenne.getCentre()[indexCentre][1] + "  bleu: "
+						+ kmoyenne.getCentre()[indexCentre][2]);
+			}
+
+			System.out.println("\n" + "Affichage dénormalisé");
+
+			// Affichage dénormalisé
+			for (int indexCentre = 0; indexCentre < K; indexCentre++) {
+				Color c = LoadSavePNG.denormaliseColor(kmoyenne.getCentre()[indexCentre]);
+				System.out.println("Centre " + indexCentre + ": " + "  rouge: " + c.getRed() + "  vert: " + c.getGreen()
+						+ "  bleu: " + c.getBlue());
+			}
+
+			// Calcul du score total et enregistrement dans fichier
+			fw.write(density + " " + kmoyenne.score() + "\n");
+
+			// Réinitialisation de l'algorithme pour le prochain apprentissage
+			// On reprend les positions des centres de la première initialisation
+			double[][] temp = new double[K][D];
+			for (int k = 0; k < K; k++) {
+				temp[k] = Arrays.copyOf(centre[k], centre[k].length);
+			}
+			kmoyenne.setCentre(temp);
+
+			// On réinitialise le tableau d'assignement
+			kmoyenne.initialiseDataGaussian();
+			// On réinitialise la variance à 0.5
+			kmoyenne.setDeviation(0.5);
+			// On fait diminuer le dénominateur de 1
+			density = 1. / (double)(K - (numberLearning + 1));
+			kmoyenne.setDensity(density);
+
+			// Saut de ligne affichage console
+			System.out.print("\n");
+		}
+		fw.close();
 	}
 	
 	/**
-	 * 
+	 * On effectue 10 apprentissages en faisant varier le nombre
+	 * de tours de boucle de l'algorithme dans [5 ; 50].
+	 * Le but est de déterminer la meilleure valeur du nombre d'itérations
+	 * pour le jeu de données en calculant le score de l'algorithme
+	 * à chaque apprentissage.
 	 */
-	public static void  question1_iteration() {
-		
+	public static void  question1_iteration() throws IOException {
+		// Chemin de l'image à analyser
+		String path = "./src/image/";
+		String imageMMS = path + "mms.png";
+
+		// Fichier de sauvegarde des scores à interpréter avec gnuplot
+		FileWriter fw = new FileWriter("question1_iteration.d");
+
+		System.out.println("Initialisation des données");
+
+		// Chargement de l'image
+		BufferedImage bui = ImageIO.read(new File(imageMMS));
+
+		// Récupération d'un tableau de couleur
+		Color[] tabColor = LoadSavePNG.loadPNG(bui);
+
+		// Extraction de couleur sous forme de donnée normalisée
+		double[][] normalizedColor = LoadSavePNG.normaliseColor(tabColor, false);
+
+		int D = 3; // Trois dimensions
+		int K = 10; // Dix centres
+		double[][] data = normalizedColor;
+
+		System.out.println("Construction d'un kmoyenne de mixture de gaussiennes");
+		KmeansGaussianMix kmoyenne = new KmeansGaussianMix(data, K);
+
+		// Initialisation des paramètres de l'algorithme
+		System.out.println("Initialisation de la mixture de gaussiennes");
+		// Initialisation des centres avec aléas (on gardera ces centres
+		// pour réinitialiser l'algorithme)
+		kmoyenne.initialise();
+		double[][] centre = new double[K][D];
+		for (int k = 0; k < K; k++) {
+			centre[k] = Arrays.copyOf(kmoyenne.getCentre()[k], kmoyenne.getCentre()[k].length);
+		}
+		// Nombre d'itérations de l'apprentissage
+		int iteration = 5;
+
+		// Dix apprentissages consécutifs
+		for (int numberLearning = 0; numberLearning < 10; numberLearning++) {
+
+			System.out.println("Apprentissage " + numberLearning + " lancé");
+			kmoyenne.runLearning(iteration);
+
+			System.out.println("Fin d'apprentissage");
+
+			// Affichage pur
+			for (int indexCentre = 0; indexCentre < K; indexCentre++) {
+				System.out.println("Centre " + indexCentre + ": " + "  rouge: " + kmoyenne.getCentre()[indexCentre][0]
+						+ "  vert: " + kmoyenne.getCentre()[indexCentre][1] + "  bleu: "
+						+ kmoyenne.getCentre()[indexCentre][2]);
+			}
+
+			System.out.println("\n" + "Affichage dénormalisé");
+
+			// Affichage dénormalisé
+			for (int indexCentre = 0; indexCentre < K; indexCentre++) {
+				Color c = LoadSavePNG.denormaliseColor(kmoyenne.getCentre()[indexCentre]);
+				System.out.println("Centre " + indexCentre + ": " + "  rouge: " + c.getRed() + "  vert: " + c.getGreen()
+						+ "  bleu: " + c.getBlue());
+			}
+
+			// Calcul du score total et enregistrement dans fichier
+			fw.write(iteration + " " + kmoyenne.score() + "\n");
+
+			// Réinitialisation de l'algorithme pour le prochain apprentissage
+			// On reprend les positions des centres de la première initialisation
+			double[][] temp = new double[K][D];
+			for (int k = 0; k < K; k++) {
+				temp[k] = Arrays.copyOf(centre[k], centre[k].length);
+			}
+			kmoyenne.setCentre(temp);
+
+			// On réinitialise le tableau d'assignement
+			kmoyenne.initialiseDataGaussian();
+			// On réinitialise les autres paramètres
+			kmoyenne.setDeviation(0.5);
+			kmoyenne.setDensity(1. / (double)K);
+			// On incrémente le nombre d'itérations de 5
+			iteration += 5;
+
+			// Saut de ligne affichage console
+			System.out.print("\n");
+		}
+		fw.close();
 	}
 
 	public static void compression() throws IOException {
-		String path = "./src/";
+		String path = "./src/image/";
 		String imageMMS = path + "mms.png";
 		Random rand = new Random();
 
