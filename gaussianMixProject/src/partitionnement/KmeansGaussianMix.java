@@ -403,22 +403,26 @@ public class KmeansGaussianMix extends Kmeans {
 		super.dataCentre = null;
 	}
 	
+	/**
+	 * @apiNote Initialise les centres des gaussiennes
+	 * (c'est-à-dire leur moyenne) de manière aléatoire.
+	 */
+	public void initialiseCentre() {
+		// Les tableaux de moyenne et de centres ont la même référence
+		super.initialise();
+	}
+	
 	@Override
 	public void initialise() {
 		// Initialisation des centres de gaussiennes
-		super.initialise();
+		this.initialiseCentre();
 		// Initialisation du tableau d'assignation
 		this.initialiseDataGaussian();
-		// Parcours des centres
+		// Initialisation de la densité
 		double density = 1. / (double)super.numberCentre;
-		for (int indexCentre = 0; indexCentre < super.numberCentre; indexCentre++) {
-			// Initialisation de la densité
-			this.density[indexCentre] = density;
-			// Initialisation de la variance
-			for (int indexCoordinate = 0; indexCoordinate < super.dimension; indexCoordinate++) {
-				this.deviation[indexCentre][indexCoordinate] = this.orderOfMagnitude;
-			}
-		}
+		this.setDensity(density);
+		// Initialisation de la variance
+		this.setDeviation(this.orderOfMagnitude);
 	}
 	
 	/**
