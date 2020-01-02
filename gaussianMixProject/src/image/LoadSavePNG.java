@@ -1,5 +1,6 @@
-package partitionnement;
+package image;
 
+import partitionnement.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.Color;
@@ -156,14 +157,14 @@ public class LoadSavePNG {
 
 	public static void simpleGaussianMixLearning(double[][] normalizedColor) {
 		// Creation d'un jeu de donnes simples pour tester l'algo
-		System.out.println("Intialisation des données");
+		System.out.println("Intialisation des donnï¿½es");
 
 		int D = 3; // Trois dimensions
 		int K = 6; // Six centres
 		double[][] data = normalizedColor; /* new double[5][D]; */ // 5 points en D dimensions
 		double[][] centre = new double[K][D]; // Centres ou moyenne des gaussiennes
 		double[][] deviation = new double[K][D]; // Variance des gaussiennes
-		double[] density = new double[K]; // Densité des gaussiennes
+		double[] density = new double[K]; // Densitï¿½ des gaussiennes
 
 		// Initialisation des centres
 		// Rouge
@@ -203,7 +204,7 @@ public class LoadSavePNG {
 			}
 		}
 
-		// Initialisation de la densité
+		// Initialisation de la densitï¿½
 		for (int i = 0; i < K; i++) {
 			density[i] = 1. / (double) K;
 		}
@@ -221,7 +222,7 @@ public class LoadSavePNG {
 
 		// System.out.println(kmoyenne + "\n");
 
-		System.out.println("Apprentissage lancé");
+		System.out.println("Apprentissage lancï¿½");
 		int maxIteration = 10;
 		kmoyenne.runLearning(maxIteration);
 
@@ -238,9 +239,9 @@ public class LoadSavePNG {
 			System.out.println("Centre " + i + ": " + "  rouge: " + centre[i][0] + "  vert: " + centre[i][1] + "  bleu: " + centre[i][2]);
 		}
 
-		System.out.println("\n" + "Affichage dénormalisé");
+		System.out.println("\n" + "Affichage dï¿½normalisï¿½");
 
-		// Affichage dénormalisé
+		// Affichage dï¿½normalisï¿½
 		for (int i = 0; i < K; i++) {
 			Color c = denormaliseColor(centre[i]);
 			System.out.println("Centre " + i + ": " + "  rouge: " + c.getRed() + "  vert: " + c.getGreen() + "  bleu: " + c.getBlue());
@@ -257,7 +258,7 @@ public class LoadSavePNG {
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				// double[] centerColor[3] coord d'un centre du pixel (i * width + j)
-				double[] centerColor = new double[3]; // = Focntion qui renvoie els coord normalisé d'un centre
+				double[] centerColor = new double[3]; // = Focntion qui renvoie els coord normalisï¿½ d'un centre
 				bui_out.setRGB(j, i, denormaliseColor(centerColor).getRGB());
 			}
 		}

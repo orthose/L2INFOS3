@@ -1,5 +1,7 @@
-package partitionnement;
+package main;
 
+import partitionnement.*;
+import image.*;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -7,7 +9,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
-
 import javax.imageio.ImageIO;
 
 /**

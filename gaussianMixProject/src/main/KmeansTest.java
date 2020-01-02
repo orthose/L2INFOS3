@@ -1,8 +1,8 @@
-package partitionnement;
+package main;
 
+import partitionnement.*;
 import java.io.FileWriter;
 import java.io.IOException;
-
 public class KmeansTest {
 	
 	public static void simpleLearning() {
