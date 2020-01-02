@@ -11,15 +11,13 @@ import java.util.Arrays;
  */
 public class KmeansGaussianMix extends Kmeans {
 	
-	// Constantes
-	private final double orderOfMagnitude = 0.5; // Ordre de grandeur des données à modifier en fonction du jeu de données
-	
 	// Attributs
 	private double[][] dataGaussian; // Probabilité d'appartenir à une gaussienne pour chaque donnée
 	private double[][] mean; // Moyenne
 	private double[][] deviation; // Ecart-Type
 	private double[] density; // Densité
 	private double[] probabilitySumGaussian; // Somme des probabilités
+	private double orderOfMagnitude; // Ordre de grandeur des données à modifier en fonction du jeu de données
 	
 	// Constructeurs
 	public KmeansGaussianMix(double[][] data, int numberCentre) {
@@ -32,6 +30,7 @@ public class KmeansGaussianMix extends Kmeans {
 		this.deviation = new double[numberCentre][super.dimension];
 		this.density = new double[numberCentre];
 		this.probabilitySumGaussian = new double[numberCentre];
+		this.orderOfMagnitude = 0.5; // 0.5 par défaut
 	}
 	
 	// Getter
@@ -109,6 +108,17 @@ public class KmeansGaussianMix extends Kmeans {
 		for (int indexGaussian = 0; indexGaussian < super.numberCentre; indexGaussian++) {
 			this.density[indexGaussian] = density;
 		}
+	}
+	
+	/**
+	 * @apiNote L'ordre de grandeur est utilisé pour l'initialisation
+	 * automatique de l'algorithme.
+	 * 
+	 * @param orderOfMagnitude: Réel représentant l'ordre de
+	 * grandeur du jeu de données
+	 */
+	public void setOrderOfMagnitude(double orderOfMagnitude) {
+		this.orderOfMagnitude = orderOfMagnitude;
 	}
 	
 	/**
@@ -406,7 +416,7 @@ public class KmeansGaussianMix extends Kmeans {
 			this.density[indexCentre] = density;
 			// Initialisation de la variance
 			for (int indexCoordinate = 0; indexCoordinate < super.dimension; indexCoordinate++) {
-				this.deviation[indexCentre][indexCoordinate] = orderOfMagnitude;
+				this.deviation[indexCentre][indexCoordinate] = this.orderOfMagnitude;
 			}
 		}
 	}
