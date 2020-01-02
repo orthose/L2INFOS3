@@ -13,7 +13,7 @@ public class KmeansGaussianMix extends Kmeans {
 	
 	// Attributs
 	private double[][] dataGaussian; // Probabilité d'appartenir à une gaussienne pour chaque donnée
-	private double[][] mean; // Moyenne
+	protected double[][] mean; // Moyenne
 	private double[][] deviation; // Ecart-Type
 	private double[] density; // Densité
 	private double[] probabilitySumGaussian; // Somme des probabilités
@@ -63,6 +63,8 @@ public class KmeansGaussianMix extends Kmeans {
 		}
 		// Les centres correspondent à la moyenne de chaque gaussienne
 		this.mean = centre;
+		// Obligatoire car mean pointe vers centre mais pas le contraire
+		super.setCentre(centre);
 	}
 	
 	/**
@@ -389,7 +391,8 @@ public class KmeansGaussianMix extends Kmeans {
 	
 	/**
 	 * @apiNote Initialise le tableau d'assignation
-	 * des données aux gaussiennes
+	 * des données aux gaussiennes. Nécessite d'avoir
+	 * initialisé les centres auparavant.
 	 */
 	public void initialiseDataGaussian() {
 		// Assignation temporaire de l'ancien tableau d'assignation
@@ -401,6 +404,8 @@ public class KmeansGaussianMix extends Kmeans {
 		}
 		// Suppression de l'ancien tableau
 		super.dataCentre = null;
+		// L'apprentissage est réinitialisé
+		super.learningState = false;
 	}
 	
 	/**
