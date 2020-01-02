@@ -3,91 +3,107 @@ package partitionnement;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+/**
+ * @apiNote Classe de lancement des m√©thodes associ√©es
+ * aux questions du projet.
+ */
 public class Main {
 
+	/**
+	 * @apiNote Lancement des questions une √† une en
+	 * commentant et d√©commentant.
+	 */
 	public static void main(String[] args) throws IOException {
-		// question1();
-		compression();
+		question1();
+		//compression();
 	}
-
+	
+	/**
+	 * @apiNote Question 1 dont le but est de faire tourner 
+	 * l'algorithme avec 10 gaussiennes et dans 10 conditions
+	 * initiales diff√©rentes. Le calcul du score permettra
+	 * de d√©terminer √† quel intervalle d'incertitude on
+	 * s'expose lorsque l'on choisit d'initialiser les
+	 * centres al√©atoirement. Ici, on fixe les m√©ta-param√®tres
+	 * et on ne fait varier que les positions initiales des
+	 * centres entre chaque apprentissage.
+	 */
 	public static void question1() throws IOException {
+		// Chemin de l'image √† analyser
 		String path = "./src/";
 		String imageMMS = path + "mms.png";
-		Random rand = new Random();
-
+		
+		// Fichier de sauvegarde des scores √† interpr√©ter avec gnuplot
+		FileWriter fw = new FileWriter("question1.d");
+		
+		System.out.println("Intialisation des donn√©es");
+		
 		// Chargement de l'image
 		BufferedImage bui = ImageIO.read(new File(imageMMS));
 
-		// RÈcupÈration d'un tableau de couleur
+		// R√©cup√©ration d'un tableau de couleur
 		Color[] tabColor = LoadSavePNG.loadPNG(bui);
 
-		// Extraction de couleur sous forme de donnÈe normalisÈ
+		// Extraction de couleur sous forme de donn√©e normalis√©e
 		double[][] normalizedColor = LoadSavePNG.normaliseColor(tabColor, false);
-
-		System.out.println("Intialisation des donnÈes");
 
 		int D = 3; // Trois dimensions
 		int K = 10; // Dix centres
 		double[][] data = normalizedColor;
-		double[][] centre = new double[K][D]; // Centres ou moyenne des gaussiennes
-		double[][] deviation = new double[K][D]; // Variance des gaussiennes
-		double[] density = new double[K]; // DensitÈ des gaussiennes
-
-		// Initialisation des centres alÈatoirement
-		for (int c = 0; c < K; c++) {
-			for (int d = 0; d < D; d++) {
-				centre[c][d] = rand.nextFloat();
-			}
-		}
-
-		// Initialisation de la variance alÈatoire
-		for (int i = 0; i < K; i++) {
-			for (int j = 0; j < D; j++) {
-				deviation[i][j] = rand.nextFloat();
-			}
-		}
-
-		// Initialisation de la densitÈ
-		for (int i = 0; i < K; i++) {
-			density[i] = 1. / (double) K;
-		}
 
 		System.out.println("Construction d'un kmoyenne de mixture de gaussiennes");
 		KmeansGaussianMix kmoyenne = new KmeansGaussianMix(data, K);
-
+		
+		// Initialisation des param√®tres de l'algorithme
 		System.out.println("Initialisation de la mixture de gaussiennes");
-		kmoyenne.setCentre(centre);
-		kmoyenne.setDensity(density);
-		kmoyenne.setDeviation(deviation);
-		kmoyenne.initialiseDataGaussian();
-
-		System.out.println("Apprentissage lancÈ");
+		// Ordre de grandeur pour la densit√©
+		kmoyenne.setOrderOfMagnitude(0.5);
+		// Initialisation des centres avec al√©as et des autres param√®tres
+		// Cette initialisation automatique suit les recommendations du sujet
+		kmoyenne.initialise();
+		// Nombre d'it√©rations de l'apprentissage
 		int maxIteration = 20;
-		kmoyenne.runLearning(maxIteration);
+		
+		// Dix apprentissages cons√©cutifs
+		for (int numberLearning = 0; numberLearning < 10; numberLearning++) {
+			
+			System.out.println("Apprentissage " + numberLearning + " lanc√©");
+			kmoyenne.runLearning(maxIteration);
 
-		System.out.println("Fin d'apprentissage");
+			System.out.println("Fin d'apprentissage");
 
-		// Affichage pure
-		for (int i = 0; i < K; i++) {
-			System.out.println("Centre " + i + ": " + "  rouge: " + centre[i][0] + "  vert: " + centre[i][1] + "  bleu: " + centre[i][2]);
+			// Affichage pur
+			for (int indexCentre = 0; indexCentre < K; indexCentre++) {
+				System.out.println("Centre " + indexCentre + ": " + "  rouge: " + kmoyenne.getCentre()[indexCentre][0] + "  vert: "
+						+ kmoyenne.getCentre()[indexCentre][1] + "  bleu: " + kmoyenne.getCentre()[indexCentre][2]);
+			}
+
+			System.out.println("\n" + "Affichage d√©normalis√©");
+
+			// Affichage d√©normalis√©
+			for (int indexCentre = 0; indexCentre < K; indexCentre++) {
+				Color c = LoadSavePNG.denormaliseColor(kmoyenne.getCentre()[indexCentre]);
+				System.out.println("Centre " + indexCentre + ": " + "  rouge: " + c.getRed() + "  vert: " + c.getGreen()
+						+ "  bleu: " + c.getBlue());
+
+			}
+
+			// Calcul du score total et enregistrement dans fichier
+			fw.write(numberLearning + " " + kmoyenne.score() + "\n");
+			
+			// R√©initialisation de l'algorithme pour le prochain apprentissage
+			kmoyenne.initialise();
+			
+			// Saut de ligne affichage console
+			System.out.print("\n");
 		}
-
-		System.out.println("\n" + "Affichage dÈnormalisÈ");
-
-		// Affichage dÈnormalisÈ
-		for (int i = 0; i < K; i++) {
-			Color c = LoadSavePNG.denormaliseColor(centre[i]);
-			System.out.println("Centre " + i + ": " + "  rouge: " + c.getRed() + "  vert: " + c.getGreen() + "  bleu: " + c.getBlue());
-
-		}
-
-		// TODO CALCUL DE SCORE POUR CHAQUE GAUSSIENNE
-
+		fw.close();
 	}
 
 	public static void compression() throws IOException {
@@ -98,22 +114,22 @@ public class Main {
 		// Chargement de l'image
 		BufferedImage bui = ImageIO.read(new File(imageMMS));
 
-		// RÈcupÈration d'un tableau de couleur
+		// RÔøΩcupÔøΩration d'un tableau de couleur
 		Color[] tabColor = LoadSavePNG.loadPNG(bui);
 
-		// Extraction de couleur sous forme de donnÈe normalisÈ
+		// Extraction de couleur sous forme de donnÔøΩe normalisÔøΩ
 		double[][] normalizedColor = LoadSavePNG.normaliseColor(tabColor, false);
 
-		System.out.println("Intialisation des donnÈes");
+		System.out.println("Intialisation des donnÔøΩes");
 
 		int D = 3; // Trois dimensions
 		int K = 10; // Dix centres
 		double[][] data = normalizedColor;
 		double[][] centre = new double[K][D]; // Centres ou moyenne des gaussiennes
 		double[][] deviation = new double[K][D]; // Variance des gaussiennes
-		double[] density = new double[K]; // DensitÈ des gaussiennes
+		double[] density = new double[K]; // DensitÔøΩ des gaussiennes
 
-		// Initialisation des centres semi-alÈatoirement
+		// Initialisation des centres semi-alÔøΩatoirement
 		// Rouge
 		centre[0][0] = 1;
 		centre[0][1] = 0;
@@ -134,21 +150,21 @@ public class Main {
 		centre[4][0] = 1;
 		centre[4][1] = 0.5;
 		centre[4][2] = 0;
-		// Reste des centres alÈatoires
+		// Reste des centres alÔøΩatoires
 		for (int c = 5; c < K; c++) {
 			for (int d = 0; d < D; d++) {
 				centre[c][d] = rand.nextFloat();
 			}
 		}
 
-		// Initialisation de la variance alÈatoire
+		// Initialisation de la variance alÔøΩatoire
 		for (int i = 0; i < K; i++) {
 			for (int j = 0; j < D; j++) {
 				deviation[i][j] = 0.5;
 			}
 		}
 
-		// Initialisation de la densitÈ
+		// Initialisation de la densitÔøΩ
 		for (int i = 0; i < K; i++) {
 			density[i] = 1. / (double) K;
 		}
@@ -162,7 +178,7 @@ public class Main {
 		kmoyenne.setDeviation(deviation);
 		kmoyenne.initialiseDataGaussian();
 
-		System.out.println("Apprentissage lancÈ");
+		System.out.println("Apprentissage lancÔøΩ");
 		int maxIteration = 10;
 		kmoyenne.runLearning(maxIteration);
 
@@ -173,9 +189,9 @@ public class Main {
 		 * + i + ": " + "  rouge: " + centre[i][0] + "  vert: " + centre[i][1] +
 		 * "  bleu: " + centre[i][2]); }
 		 * 
-		 * System.out.println("\n" + "Affichage dÈnormalisÈ");
+		 * System.out.println("\n" + "Affichage dÔøΩnormalisÔøΩ");
 		 * 
-		 * // Affichage dÈnormalisÈ for (int i = 0; i < K; i++) { Color c =
+		 * // Affichage dÔøΩnormalisÔøΩ for (int i = 0; i < K; i++) { Color c =
 		 * LoadSavePNG.denormaliseColor(centre[i]); System.out.println("Centre " + i +
 		 * ": " + "  rouge: " + c.getRed() + "  vert: " + c.getGreen() + "  bleu: " +
 		 * c.getBlue());
@@ -192,7 +208,7 @@ public class Main {
 				/*
 				 * // double[] centerColor[3] coord d'un centre du pixel (i * width + j)
 				 * double[] centerColor = new double[3]; // = Focntion qui renvoie els coord
-				 * normalisÈ d'un centre
+				 * normalisÔøΩ d'un centre
 				 */
 				bui_out.setRGB(j, i, LoadSavePNG.denormaliseColor(centre[centreIndex]).getRGB());
 			}
