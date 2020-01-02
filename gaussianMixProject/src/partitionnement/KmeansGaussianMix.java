@@ -410,6 +410,45 @@ public class KmeansGaussianMix extends Kmeans {
 			}
 		}
 	}
+	
+	/**
+	 * @apiNote Permet d'obtenir le score de l'algorithme
+	 * sur une donnée.
+	 * 
+	 * @param indexData: Indice de la donnée dans [0 ; D[
+	 * 
+	 * @return Réel correspondant au score
+	 */
+	public double score(int indexData) {
+		double sum = 0;
+		// Parcours des gaussiennes
+		for (int indexGaussian = 0; indexGaussian < super.numberCentre; indexGaussian++) {
+			double product = 1;
+			// Parcours des coordonnées
+			for (int indexCoordinate = 0; indexCoordinate < super.dimension; indexCoordinate++) {
+				double factor1 = 1. / Math.sqrt(2 * Math.PI * this.deviation[indexGaussian][indexCoordinate]);
+				double factor2 = Math.exp(- Math.pow(super.data[indexData][indexCoordinate] - this.mean[indexGaussian][indexCoordinate], 2) / (2 * this.deviation[indexGaussian][indexCoordinate]));
+				product *= (factor1 * factor2);
+			}
+			sum += this.density[indexGaussian] * product;
+		}
+		return Math.log(sum);
+	}
+	
+	/**
+	 * @apiNote Permet d'obtenir le score total de l'algorithme
+	 * sur l'ensemble des données.
+	 * 
+	 * @return Réel correspondant au score total
+	 */
+	public double score() {
+		double sum = 0;
+		// Parcours des données
+		for (int indexData = 0; indexData < super.numberData; indexData++) {
+			sum += this.score(indexData);
+		}
+		return sum / (double)super.numberData;
+	}
 }
 
 
