@@ -79,6 +79,18 @@ public class KmeansGaussianMix extends Kmeans {
 	}
 	
 	/**
+	 * @param deviation: Réel pour initialiser toutes les coordonnées
+	 * de l'écart-type de chaque gaussienne
+	 */
+	public void setDeviation(double deviation) {
+		for (int indexGaussian = 0; indexGaussian < super.numberCentre; indexGaussian++) {
+			for (int indexCoordinate = 0; indexCoordinate < super.dimension; indexCoordinate++) {
+				this.deviation[indexGaussian][indexCoordinate] = deviation;
+			}
+		}
+	}
+	
+	/**
 	 * @param density: Tableau de taille K contenant
 	 * les densités associées à chaque gaussienne
 	 */
@@ -87,6 +99,16 @@ public class KmeansGaussianMix extends Kmeans {
 			throw new IllegalCallerException("Paramètres de setCentre() invalides");
 		}
 		this.density = density;
+	}
+	
+	/**
+	 * @param density: Réel pour initialiser toutes les densités
+	 * des gaussiennes
+	 */
+	public void setDensity(double density) {
+		for (int indexGaussian = 0; indexGaussian < super.numberCentre; indexGaussian++) {
+			this.density[indexGaussian] = density;
+		}
 	}
 	
 	/**
