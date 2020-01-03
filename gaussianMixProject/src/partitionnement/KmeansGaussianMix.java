@@ -123,6 +123,22 @@ public class KmeansGaussianMix extends Kmeans {
 		this.orderOfMagnitude = orderOfMagnitude;
 	}
 	
+	@Override
+	/**
+	 * @apiNote Détruit le dernier apprentissage 
+	 * et nécessite une réinitialisation complète.
+	 */
+	public void setNumberCentre(int numberCentre) {
+		super.setNumberCentre(numberCentre);
+		this.dataGaussian = new double[super.numberData][numberCentre];
+		this.deviation = new double[numberCentre][super.dimension];
+		this.density = new double[numberCentre];
+		this.probabilitySumGaussian = new double[numberCentre];
+		// Il faut mettre à jour la référence de mean
+		this.mean = super.centre;
+		
+	}
+	
 	/**
 	 * @param indexGaussian: Indice de la gaussienne
 	 * dans [0 ; K[
