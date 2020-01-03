@@ -12,12 +12,11 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 
 /**
- * @apiNote Classe de lancement des méthodes associées aux questions du
- *          projet. La plupart des questions consistent à déterminer les
- *          meilleurs paramètres à utiliser pour un jeu de données. Pour ce
- *          faire, on ne fera varier qu'un paramètre à la fois dans chacune de
- *          ces questions. C'est pourquoi nous avons dû écrire des méthodes
- *          supplémentaires.
+ * @apiNote Classe de lancement des méthodes associées aux questions du projet.
+ *          La plupart des questions consistent à déterminer les meilleurs
+ *          paramètres à utiliser pour un jeu de données. Pour ce faire, on ne
+ *          fera varier qu'un paramètre à la fois dans chacune de ces questions.
+ *          C'est pourquoi nous avons dû écrire des méthodes supplémentaires.
  */
 public class Main {
 
@@ -25,24 +24,25 @@ public class Main {
 	 * @apiNote Lancement des questions une à une en commentant et décommentant.
 	 */
 	public static void main(String[] args) throws IOException {
-		//question1_centre();
-		//question1_deviation();
-		//question1_density();
-		//question1_iteration();
-		//question2_centre();
-		//question2_deviation();
-		question2_iteration();
-		//compression();
+
+		// question1_centre();
+		// question1_deviation();
+		// question1_density();
+		// question1_iteration();
+		// question2_centre();
+		// question2_deviation();
+		// question2_iteration();
+		// question3();
+		// compression();
 	}
 
 	/**
 	 * @apiNote Question 1 dont le but est de faire tourner l'algorithme avec 10
 	 *          gaussiennes et dans 10 conditions initiales différentes. Le calcul
-	 *          du score permettra de déterminer à quel intervalle d'incertitude
-	 *          on s'expose lorsque l'on choisit d'initialiser les centres
-	 *          aléatoirement. Ici, on fixe les méta-paramètres et on ne fait
-	 *          varier que les positions initiales des centres entre chaque
-	 *          apprentissage.
+	 *          du score permettra de déterminer à quel intervalle d'incertitude on
+	 *          s'expose lorsque l'on choisit d'initialiser les centres
+	 *          aléatoirement. Ici, on fixe les méta-paramètres et on ne fait varier
+	 *          que les positions initiales des centres entre chaque apprentissage.
 	 */
 	public static void question1_centre() throws IOException {
 		// Chemin de l'image à analyser
@@ -114,11 +114,10 @@ public class Main {
 	}
 
 	/**
-	 * @apiNote On effectue 10 apprentissages en faisant varier l'écart-type
-	 *          initial des gaussiennes dans [0.05 ; 0.50]. Le but est de
-	 *          déterminer la meilleure valeur d'écart-type pour le jeu de
-	 *          données en calculant le score de l'algorithme à chaque
-	 *          apprentissage.
+	 * @apiNote On effectue 10 apprentissages en faisant varier l'écart-type initial
+	 *          des gaussiennes dans [0.05 ; 0.50]. Le but est de déterminer la
+	 *          meilleure valeur d'écart-type pour le jeu de données en calculant le
+	 *          score de l'algorithme à chaque apprentissage.
 	 */
 	public static void question1_deviation() throws IOException {
 		// Chemin de l'image à analyser
@@ -389,16 +388,14 @@ public class Main {
 		}
 		fw.close();
 	}
-	
+
 	/**
-	 * @apiNote Question 2 dont le but est de réaliser
-	 * des apprentissages en faisant varier le nombre de
-	 * centres initiaux entre [2 ; 10]. Pour chaque nombre
-	 * de centres on réalise 10 apprentissages successifs,
-	 * en modifiant les conditions initiales. Ici, on ne
-	 * changera que la position initiale des centres. Pour
-	 * chaque apprentissage, on calcule le score total
-	 * de l'algorithme.
+	 * @apiNote Question 2 dont le but est de réaliser des apprentissages en faisant
+	 *          varier le nombre de centres initiaux entre [2 ; 10]. Pour chaque
+	 *          nombre de centres on réalise 10 apprentissages successifs, en
+	 *          modifiant les conditions initiales. Ici, on ne changera que la
+	 *          position initiale des centres. Pour chaque apprentissage, on calcule
+	 *          le score total de l'algorithme.
 	 */
 	public static void question2_centre() throws IOException {
 		// Chemin de l'image à analyser
@@ -437,13 +434,13 @@ public class Main {
 
 		// Incrémentation du nombre de centres
 		while (K <= 10) {
-			
+
 			System.out.println("Nombre de centres : " + K);
 			fw.write(K + " ");
-			
+
 			// Dix apprentissages consécutifs
 			for (int numberLearning = 0; numberLearning < 10; numberLearning++) {
-				
+
 				System.out.println("Apprentissage " + numberLearning + " lancé");
 				kmoyenne.runLearning(maxIteration);
 
@@ -451,8 +448,7 @@ public class Main {
 
 				// Affichage pur
 				for (int k = 0; k < K; k++) {
-					System.out.println("Centre " + k + ": " + "  rouge: " + kmoyenne.getCentre()[k][0] + "  vert: "
-							+ kmoyenne.getCentre()[k][1] + "  bleu: " + kmoyenne.getCentre()[k][2]);
+					System.out.println("Centre " + k + ": " + "  rouge: " + kmoyenne.getCentre()[k][0] + "  vert: " + kmoyenne.getCentre()[k][1] + "  bleu: " + kmoyenne.getCentre()[k][2]);
 				}
 
 				System.out.println("\n" + "Affichage dénormalisé");
@@ -460,18 +456,17 @@ public class Main {
 				// Affichage dénormalisé
 				for (int k = 0; k < K; k++) {
 					Color c = LoadSavePNG.denormaliseColor(kmoyenne.getCentre()[k]);
-					System.out.println("Centre " + k + ": " + "  rouge: " + c.getRed() + "  vert: " + c.getGreen()
-							+ "  bleu: " + c.getBlue());
+					System.out.println("Centre " + k + ": " + "  rouge: " + c.getRed() + "  vert: " + c.getGreen() + "  bleu: " + c.getBlue());
 				}
 
 				// Calcul du score total et enregistrement dans fichier
 				fw.write(kmoyenne.score() + " ");
-				
+
 				// Réinitialisation de l'algorithme pour le prochain apprentissage
 				kmoyenne.initialise();
 			}
 			fw.write("\n");
-			
+
 			// Modification du nombre de centres
 			kmoyenne.setNumberCentre(++K);
 			// Réinitialisation de l'algorithme pour le prochain apprentissage
@@ -482,13 +477,12 @@ public class Main {
 		}
 		fw.close();
 	}
-	
+
 	/**
-	 * @apiNote Pour chaque nombre de centres on fera
-	 * varier la variance entre [0.05 ; 0.50] et on 
-	 * calculera le score de l'algorithme. Pour chaque
-	 * nombre de centres on garde les mêmes positions
-	 * de centre (initialisées de manière aléatoire). 
+	 * @apiNote Pour chaque nombre de centres on fera varier la variance entre [0.05
+	 *          ; 0.50] et on calculera le score de l'algorithme. Pour chaque nombre
+	 *          de centres on garde les mêmes positions de centre (initialisées de
+	 *          manière aléatoire).
 	 */
 	public static void question2_deviation() throws IOException {
 		// Chemin de l'image à analyser
@@ -531,7 +525,7 @@ public class Main {
 
 			System.out.println("Nombre de centres : " + K);
 			fw.write(K + " ");
-			
+
 			// Enregistrement des centres initialisés avec aléas
 			double[][] centre = new double[K][D];
 			for (int k = 0; k < K; k++) {
@@ -547,8 +541,7 @@ public class Main {
 
 				// Affichage pur
 				for (int k = 0; k < K; k++) {
-					System.out.println("Centre " + k + ": " + "  rouge: " + kmoyenne.getCentre()[k][0] + "  vert: "
-							+ kmoyenne.getCentre()[k][1] + "  bleu: " + kmoyenne.getCentre()[k][2]);
+					System.out.println("Centre " + k + ": " + "  rouge: " + kmoyenne.getCentre()[k][0] + "  vert: " + kmoyenne.getCentre()[k][1] + "  bleu: " + kmoyenne.getCentre()[k][2]);
 				}
 
 				System.out.println("\n" + "Affichage dénormalisé");
@@ -556,8 +549,7 @@ public class Main {
 				// Affichage dénormalisé
 				for (int k = 0; k < K; k++) {
 					Color c = LoadSavePNG.denormaliseColor(kmoyenne.getCentre()[k]);
-					System.out.println("Centre " + k + ": " + "  rouge: " + c.getRed() + "  vert: " + c.getGreen()
-							+ "  bleu: " + c.getBlue());
+					System.out.println("Centre " + k + ": " + "  rouge: " + c.getRed() + "  vert: " + c.getGreen() + "  bleu: " + c.getBlue());
 				}
 
 				// Calcul du score total et enregistrement dans fichier
@@ -570,7 +562,7 @@ public class Main {
 					temp[k] = Arrays.copyOf(centre[k], centre[k].length);
 				}
 				kmoyenne.setCentre(temp);
-				
+
 				// On réinitialise le tableau d'assignement
 				kmoyenne.initialiseDataGaussian();
 				// On réinitialise la densité
@@ -588,20 +580,18 @@ public class Main {
 			// Initialisation de la variance à 0.05
 			deviation = 0.05;
 			kmoyenne.setDeviation(deviation);
-			
+
 			// Saut de ligne affichage console
 			System.out.print("\n");
 		}
 		fw.close();
 	}
-	
+
 	/**
-	 * @apiNote Pour chaque nombre de centres on fait
-	 * varier le nombre d'itérations entre [5 ; 50].
-	 * On calcule le score de l'algorithme pour chaque
-	 * nouvel apprentissage. Pour chaque nombre de centres 
-	 * on garde les mêmes positions de centre 
-	 * (initialisées de manière aléatoire).
+	 * @apiNote Pour chaque nombre de centres on fait varier le nombre d'itérations
+	 *          entre [5 ; 50]. On calcule le score de l'algorithme pour chaque
+	 *          nouvel apprentissage. Pour chaque nombre de centres on garde les
+	 *          mêmes positions de centre (initialisées de manière aléatoire).
 	 */
 	public static void question2_iteration() throws IOException {
 		// Chemin de l'image à analyser
@@ -639,7 +629,7 @@ public class Main {
 
 			System.out.println("Nombre de centres : " + K);
 			fw.write(K + " ");
-			
+
 			// Nombre d'itérations de l'apprentissage fixé à 5
 			int iteration = 5;
 
@@ -648,7 +638,7 @@ public class Main {
 			for (int k = 0; k < K; k++) {
 				centre[k] = Arrays.copyOf(kmoyenne.getCentre()[k], kmoyenne.getCentre()[k].length);
 			}
-			
+
 			// Dix apprentissages consécutifs
 			for (int numberLearning = 0; numberLearning < 10; numberLearning++) {
 
@@ -659,8 +649,7 @@ public class Main {
 
 				// Affichage pur
 				for (int k = 0; k < K; k++) {
-					System.out.println("Centre " + k + ": " + "  rouge: " + kmoyenne.getCentre()[k][0] + "  vert: "
-							+ kmoyenne.getCentre()[k][1] + "  bleu: " + kmoyenne.getCentre()[k][2]);
+					System.out.println("Centre " + k + ": " + "  rouge: " + kmoyenne.getCentre()[k][0] + "  vert: " + kmoyenne.getCentre()[k][1] + "  bleu: " + kmoyenne.getCentre()[k][2]);
 				}
 
 				System.out.println("\n" + "Affichage dénormalisé");
@@ -668,8 +657,7 @@ public class Main {
 				// Affichage dénormalisé
 				for (int k = 0; k < K; k++) {
 					Color c = LoadSavePNG.denormaliseColor(kmoyenne.getCentre()[k]);
-					System.out.println("Centre " + k + ": " + "  rouge: " + c.getRed() + "  vert: " + c.getGreen()
-							+ "  bleu: " + c.getBlue());
+					System.out.println("Centre " + k + ": " + "  rouge: " + c.getRed() + "  vert: " + c.getGreen() + "  bleu: " + c.getBlue());
 				}
 
 				// Calcul du score total et enregistrement dans fichier
@@ -705,6 +693,253 @@ public class Main {
 		fw.close();
 	}
 
+	/**
+	 * On charge une image quelconque, puis selection des centres par un algorithme
+	 * automatique, écriture des résultats dans un fichier .txt et par une image
+	 * compressé
+	 * 
+	 * @throws IOException
+	 */
+	public static void question3() throws IOException {
+		String path = "./src/image/";
+		String image = path + "img1.jpg";
+		FileWriter fw = new FileWriter(path + "question3/" + "question3.txt");
+
+		// Chargement de l'image
+		BufferedImage bui = ImageIO.read(new File(image));
+
+		// Récupération d'un tableau de couleur
+		Color[] tabColorRGB = LoadSavePNG.loadPNG(bui);
+		// Récupération d'un tableau de réel contenant les valeur hsb du tableau de
+		// couleur rgb
+		float[][] hsbValue = new float[tabColorRGB.length][3];
+		for (int c = 0; c < tabColorRGB.length; c++) {
+			int red = tabColorRGB[c].getRed();
+			int green = tabColorRGB[c].getGreen();
+			int blue = tabColorRGB[c].getBlue();
+			Color.RGBtoHSB(red, green, blue, hsbValue[c]);
+			hsbValue[c][0] = hsbValue[c][0] * 360;
+			hsbValue[c][1] = hsbValue[c][1] * 100;
+			hsbValue[c][2] = hsbValue[c][2] * 100;
+		}
+
+		/*
+		 * Ici la couleur est réprésenté par un entier: 0:rouge 1:orange 2:jaune 3:vert
+		 * 4:bleu clair 5:bleu foncé 6:violet 7:rose
+		 */
+		// ColorMap[couleur][saturation][brightness]=nombre pixels correspondant
+		int[][][] ColorMap = new int[9][101][101];
+
+		// Remplissage du tableau ColorMap
+		for (float[] c : hsbValue) {
+			int saturation = (int) c[1];
+			int brightness = (int) c[2];
+			int color = -1;
+			if (saturation != 0 && brightness != 0) {
+				if ((c[0] < 15 || c[0] >= 330)) {
+					color = 0; // Rouge
+				} else if (c[0] >= 15 && c[0] < 45) {
+					color = 1; // Orange
+				} else if (c[0] >= 45 && c[0] < 90) {
+					color = 2; // Jaune
+				} else if (c[0] >= 90 && c[0] < 150) {
+					color = 3; // Vert
+				} else if (c[0] >= 150 && c[0] < 210) {
+					color = 4; // Bleu clair
+				} else if (c[0] >= 210 && c[0] < 270) {
+					color = 5; // Bleu foncé
+				} else if (c[0] >= 270 && c[0] < 285) {
+					color = 6; // Violet
+				} else if (c[0] >= 285 && c[0] < 330) {
+					color = 7; // Rose
+				}
+			} else {
+				color = 8; // Teinte de gris
+			}
+			ColorMap[color][saturation][brightness]++;
+		}
+
+		int nbCentre = 0; // Variable du nombre de centre
+		int nombreTotalDePixel = tabColorRGB.length; // nombre de pixel sur l'image
+		boolean[] couleurPrésente = new boolean[9];
+		// Parcours des Couleurs
+		for (int i = 0; i < 9; i++) {
+			int nbPixelColor = 0;
+			for (int s = 0; s <= 100; s++) {
+				for (int b = 0; b <= 100; b++) {
+					if (ColorMap[i][s][b] > 0) {
+						nbPixelColor++;
+					}
+				}
+			}
+			// Si une couleur est présente à plus de 1/250 de l'image alors on lui accorde
+			// un centre
+			if (nbPixelColor > nombreTotalDePixel / 200) {
+				nbCentre++;
+				couleurPrésente[i] = true;
+			}
+		}
+
+		fw.write("Couleur présente sur l'image: \n");
+		for (int i = 0; i < couleurPrésente.length; i++) {
+			if (couleurPrésente[i]) {
+				switch (i) {
+				case 0: // Rouge
+					fw.write("Rouge \n");
+					break;
+				case 1: // Orange
+					fw.write("Orange \n");
+					break;
+				case 2: // Jaune
+					fw.write("Jaune \n");
+					break;
+				case 3: // Vert
+					fw.write("Vert \n");
+					break;
+				case 4: // Bleu clair
+					fw.write("Bleu clair \n");
+					break;
+				case 5: // Bleu foncé
+					fw.write("Bleu foncé \n");
+					break;
+				case 6: // Violet
+					fw.write("Violet \n");
+					break;
+				case 7: // Rose
+					fw.write("Rose \n");
+					break;
+				case 8: // Teinte de gris
+					fw.write("Teinte de gris \n");
+					break;
+				}
+			}
+		}
+		fw.write("\n" + "Nombre de centres: " + nbCentre);
+
+		// Extraction de couleur sous forme de donnée normalisé
+		double[][] normalizedColor = LoadSavePNG.normaliseColor(tabColorRGB, false);
+
+		System.out.println("Intialisation des données");
+
+		int D = 3; // Trois dimensions
+		int K = nbCentre;
+		double[][] data = normalizedColor;
+		double[][] centre = new double[K][D]; // Centres ou moyenne des gaussiennes
+		double[][] deviation = new double[K][D]; // Variance des gaussiennes
+		double[] density = new double[K]; // Densité des gaussiennes
+
+		// Initialisation des centres
+		int indexCentre = 0;
+		fw.write("Centres initiaux:" + "\n");
+		for (int i = 0; i < 9; i++) {
+			if (couleurPrésente[i]) {
+				int maxColor = 0;
+				int saturation = 0;
+				int brightness = 0;
+				for (int s = 0; s <= 100; s++) {
+					for (int b = 0; b <= 100; b++) {
+						// Obtention de la teinte et de la luminosité la plus présente sur les pixel de
+						// l'image
+						if (ColorMap[i][s][b] > maxColor) {
+							maxColor = ColorMap[i][s][b];
+							saturation = s;
+							brightness = b;
+						}
+					}
+				}
+				// Obtention de la couleur
+				int hue = -1;
+				switch (i) {
+				case 0: // Rouge
+					hue = 0;
+					break;
+				case 1: // Orange
+					hue = 30;
+					break;
+				case 2: // Jaune
+					hue = 60;
+					break;
+				case 3: // Vert
+					hue = 120;
+					break;
+				case 4: // Bleu clair
+					hue = 175;
+					break;
+				case 5: // Bleu foncé
+					hue = 225;
+					break;
+				case 6: // Violet
+					hue = 280;
+					break;
+				case 7: // Rose
+					hue = 310;
+					break;
+				case 8: // Teinte de gris
+					hue = 0;
+					break;
+				}
+				int colorValue = Color.HSBtoRGB((float) (hue / 360f), (float) (saturation / 100f), (float) (brightness / 100f));
+				Color colorRGB = new Color(colorValue);
+				centre[indexCentre][0] = colorRGB.getRed() / 255f;
+				centre[indexCentre][1] = colorRGB.getGreen() / 255f;
+				centre[indexCentre][2] = colorRGB.getBlue() / 255f;
+				fw.write("centre " + indexCentre + ":  " + colorRGB.getRed() + " " + colorRGB.getGreen() + " " + colorRGB.getBlue() + "\n");
+				indexCentre++;
+			}
+		}
+		fw.write("\n");
+
+		// Initialisation de la variance
+		for (int i = 0; i < K; i++) {
+			for (int j = 0; j < D; j++) {
+				deviation[i][j] = 0.5;
+			}
+		}
+
+		// Initialisation de la densité
+		for (int i = 0; i < K; i++) {
+			density[i] = 1. / (double) K;
+		}
+
+		System.out.println("Construction d'un kmoyenne de mixture de gaussiennes");
+		KmeansGaussianMix kmoyenne = new KmeansGaussianMix(data, K);
+
+		System.out.println("Initialisation de la mixture de gaussiennes");
+		kmoyenne.setCentre(centre);
+		kmoyenne.setDensity(density);
+		kmoyenne.setDeviation(deviation);
+		kmoyenne.initialiseDataGaussian();
+
+		System.out.println("Apprentissage lancé");
+		int maxIteration = 30;
+		kmoyenne.runLearning(maxIteration);
+
+		System.out.println("Fin d'apprentissage");
+
+		fw.write("Centres finaux:" + "\n");
+		for (int i = 0; i < centre.length; i++) {
+			fw.write("centre " + i + ":  " + (int) (centre[i][0] * 255) + " " + (int) (centre[i][1] * 255) + " " + (int) (centre[i][2] * 255) + "\n");
+		}
+
+		/** sauvegarde de l'image **/
+		BufferedImage bui_out = new BufferedImage(bui.getWidth(), bui.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+		for (int i = 0; i < bui.getHeight(); i++) {
+			for (int j = 0; j < bui.getWidth(); j++) {
+				int centreIndex = kmoyenne.answer(j + i * bui.getWidth());
+				bui_out.setRGB(j, i, LoadSavePNG.denormaliseColor(centre[centreIndex]).getRGB());
+			}
+		}
+		ImageIO.write(bui_out, "JPG", new File(path + "question3/" + "question3_img_Compressé_" + K + "centres.jpg"));
+
+		fw.close();
+	}
+
+	/**
+	 * On fait tourner 4 fois l'algorithme en fessant variée le nombre de centre de
+	 * 5 à 20 compris par pas de 5, pour chaque pixel on lui associe la couleur du
+	 * centre auquel il est associé, on obtient une image compréssé contenant autant
+	 * de couleur que de centre
+	 */
 	public static void compression() throws IOException {
 		String path = "./src/image/";
 		String imageMMS = path + "mms.png";
@@ -721,7 +956,7 @@ public class Main {
 
 		// Itération du nombre de centres de 5 à 20 compris
 		for (int e = 5; e <= 20; e += 5) {
-			System.out.println("Apprantissage " + e/5);
+			System.out.println("Apprantissage " + e / 5);
 			System.out.println("Intialisation des données");
 
 			int D = 3; // Trois dimensions
@@ -731,8 +966,7 @@ public class Main {
 			double[][] deviation = new double[K][D]; // Variance des gaussiennes
 			double[] density = new double[K]; // Densité des gaussiennes
 
-			// Initialisation des centres semi-aléatoirement
-			// Reste des centres aléatoires
+			// Initialisation des centres aléatoirement
 			for (int c = 0; c < K; c++) {
 				for (int d = 0; d < D; d++) {
 					centre[c][d] = rand.nextFloat();
@@ -761,20 +995,21 @@ public class Main {
 			kmoyenne.initialiseDataGaussian();
 
 			System.out.println("Apprentissage lancé");
-			int maxIteration = 10;
+			int maxIteration = 20;
 			kmoyenne.runLearning(maxIteration);
 
-			System.out.println("Fin d'apprentissage"+"\n");
+			System.out.println("Fin d'apprentissage" + "\n");
 
 			/** sauvegarde de l'image **/
 			BufferedImage bui_out = new BufferedImage(bui.getWidth(), bui.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
-			for (int i = 0; i < bui.getHeight(); i++) {
-				for (int j = 0; j < bui.getWidth(); j++) {
-					int centreIndex = kmoyenne.answer(j + i * bui.getWidth());
-					bui_out.setRGB(j, i, LoadSavePNG.denormaliseColor(centre[centreIndex]).getRGB());
+			for (int j = 0; j < bui_out.getHeight(); j++) {
+				for (int i = 0; i < bui_out.getWidth(); i++) {
+					int centreIndex = kmoyenne.answer(i + j * bui_out.getWidth());
+					bui_out.setRGB(i, j, LoadSavePNG.denormaliseColor(centre[centreIndex]).getRGB());
 				}
 			}
-			ImageIO.write(bui_out, "PNG", new File(path+"compression/" + "compression_" + K + "centres.png"));
+			ImageIO.write(bui_out, "JPG", new File(path + "compression/" + "compression_" + K + "centres.jpg"));
+
 		}
 	}
 

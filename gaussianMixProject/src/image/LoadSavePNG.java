@@ -10,6 +10,13 @@ import java.io.IOException;
 public class LoadSavePNG {
 	static BufferedImage bi;
 
+	/**
+	 * Transforme une image en tableu de Couleur
+	 * 
+	 * @param bui une image
+	 * @return le tableau de couleur de l'image
+	 * @throws IOException
+	 */
 	public static Color[] loadPNG(BufferedImage bui) throws IOException {
 
 		int width = bui.getWidth();
@@ -28,6 +35,15 @@ public class LoadSavePNG {
 		return tabColor;
 	}
 
+	/**
+	 * Normalise un tableau de couleur en entier entre [0, 1]
+	 * 
+	 * @param tabColor     un tableau de couleurs
+	 * @param optimisation un boolean qui décide si le fond de l'image doit être
+	 *                     enlever pour ne garder que les mms
+	 * @return Un tableau à 2 dimensions qui à chaque pixels associe la couleur RGB
+	 *         normalisé
+	 */
 	public static double[][] normaliseColor(Color[] tabColor, boolean optimisation) {
 		Color[] newColorTab;
 		if (optimisation) {
@@ -46,6 +62,13 @@ public class LoadSavePNG {
 		return normalizedColor;
 	}
 
+	/**
+	 * Optimise un tableau de couleur en enlevant certains pixels d'une certaines
+	 * couleurs cf: le marron de la table
+	 * 
+	 * @param tabColor un tableu de couleur
+	 * @return un tableau de couleur épuré
+	 */
 	public static Color[] colorOptimisation(Color[] tabColor) {
 		Color[] optimizedTabColor;
 		int badColor = 0;
@@ -77,47 +100,17 @@ public class LoadSavePNG {
 		return optimizedTabColor;
 	}
 
-	public static Color/* [] */ denormaliseColor(double[]/* [] */ normalizedColor) {
-		Color/* [] */ denormalizedColor /* = new Color[normalizedColor.length] */;
-		// for (int i = 0; i < normalizedColor.length; i++) {
-		denormalizedColor/* [i] */ = new Color((int) (normalizedColor/* [i] */[0] * 255), (int) (normalizedColor/* [i] */[1] * 255), (int) (normalizedColor/* [i] */[2] * 255));
-		// }
+	/**
+	 * Dénormalise une couleur et la met entre [0,255]
+	 * 
+	 * @param normalizedColor un tableau de couleur normalisé à 3 cases
+	 * @return une Couleur en RGB
+	 */
+	public static Color denormaliseColor(double[] normalizedColor) {
+		Color denormalizedColor;
+		denormalizedColor = new Color((int) (normalizedColor[0] * 255), (int) (normalizedColor[1] * 255), (int) (normalizedColor[2] * 255));
 		return denormalizedColor;
 	}
-
-	// TEST
-	public static void testImg(int width, int height, String path, Color[] tabColor) throws IOException {
-		Color[] tabColorTest = colorTest(tabColor);
-
-		BufferedImage bui_out = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
-		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++)
-				bui_out.setRGB(j, i, tabColorTest[i * width + j].getRGB());
-		}
-		ImageIO.write(bui_out, "PNG", new File(path + "testImg.png"));
-	}
-
-	public static Color[] colorTest(Color[] tabColor) {
-		Color[] tabColorTest;
-		tabColorTest = new Color[tabColor.length];
-
-		int index = 0;
-		for (Color c : tabColor) {
-			int red = c.getRed();
-			int green = c.getGreen();
-			int blue = c.getBlue();
-			if (!(((red > 135 && red < 255) && (green > 90 && green < 230) && (blue > 60 && blue < 190)) && (red > 150 && green > 150 && blue > 150))) {
-				tabColorTest[index] = c;
-			} else {
-				tabColorTest[index] = new Color(0, 0, 0);
-			}
-
-			index++;
-		}
-
-		return tabColorTest;
-	}
-	// END TEST
 
 	public static void main(String[] args) throws IOException {
 
@@ -126,33 +119,13 @@ public class LoadSavePNG {
 		// Lecture de l'image
 		BufferedImage bui = ImageIO.read(new File(imageMMS));
 
+		// Obtention tableau de couleur
 		Color[] tabColor = loadPNG(bui);
 
-		// testImg(bui.getWidth(), bui.getHeight(), path, tabColor);
-
+		// Normalisation des couleurs
 		double[][] normalizedColor = normaliseColor(tabColor, true);
 
 		simpleGaussianMixLearning(normalizedColor);
-
-		// Question Bonus: Compression
-		// Compression(bui.getWidth(), bui.getHeight(), path);
-
-		/** inversion des couleurs **/
-		/*
-		 * for(int i=0 ; i<tabColor.length ; i++) tabColor[i]=new
-		 * Color(255-tabColor[i].getRed(),255-tabColor[i].getGreen(),255-tabColor[i].
-		 * getBlue());
-		 */
-
-		/** sauvegarde de l'image **/
-		/*
-		 * BufferedImage bui_out = new
-		 * BufferedImage(bui.getWidth(),bui.getHeight(),BufferedImage.TYPE_3BYTE_BGR);
-		 * for(int i=0 ; i<height ; i++) { for(int j=0 ; j<width ; j++)
-		 * bui_out.setRGB(j,i,tabColor[i*width+j].getRGB()); } ImageIO.write(bui_out,
-		 * "PNG", new File(path+"test.png"));
-		 */
-
 	}
 
 	public static void simpleGaussianMixLearning(double[][] normalizedColor) {
@@ -212,27 +185,17 @@ public class LoadSavePNG {
 		System.out.println("Construction d'un kmoyenne de mixture de gaussiennes");
 		KmeansGaussianMix kmoyenne = new KmeansGaussianMix(data, K);
 
-		// System.out.println(kmoyenne + "\n");
-
 		System.out.println("Initialisation de la mixture de gaussiennes");
 		kmoyenne.setCentre(centre);
 		kmoyenne.setDensity(density);
 		kmoyenne.setDeviation(deviation);
 		kmoyenne.initialiseDataGaussian();
 
-		// System.out.println(kmoyenne + "\n");
-
 		System.out.println("Apprentissage lanc�");
 		int maxIteration = 10;
 		kmoyenne.runLearning(maxIteration);
 
 		System.out.println("Fin d'apprentissage");
-
-		// Verification
-		// System.out.println(kmoyenne);
-
-		// verification
-		// System.out.println(kmoyenne + "\n");
 
 		// Affichage pure
 		for (int i = 0; i < K; i++) {
@@ -247,22 +210,6 @@ public class LoadSavePNG {
 			System.out.println("Centre " + i + ": " + "  rouge: " + c.getRed() + "  vert: " + c.getGreen() + "  bleu: " + c.getBlue());
 
 		}
-
-	}
-
-	// QUESTION COMPRESSION
-	public static void Compression(int width, int height, String path) throws IOException {
-
-		/** sauvegarde de l'image **/
-		BufferedImage bui_out = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
-		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++) {
-				// double[] centerColor[3] coord d'un centre du pixel (i * width + j)
-				double[] centerColor = new double[3]; // = Focntion qui renvoie els coord normalis� d'un centre
-				bui_out.setRGB(j, i, denormaliseColor(centerColor).getRGB());
-			}
-		}
-		ImageIO.write(bui_out, "PNG", new File(path + "test.png"));
 
 	}
 }

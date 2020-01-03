@@ -1,0 +1,26 @@
+Couleur présente sur l'image: 
+Rouge 
+Orange 
+Jaune 
+Vert 
+Bleu clair 
+Bleu foncé 
+Rose 
+
+Nombre de centres: 7Centres initiaux:
+centre 0:  110 0 0
+centre 1:  36 18 0
+centre 2:  36 36 0
+centre 3:  0 26 0
+centre 4:  218 240 238
+centre 5:  22 45 115
+centre 6:  255 252 255
+
+Centres finaux:
+centre 0:  178 96 19
+centre 1:  81 51 20
+centre 2:  121 98 72
+centre 3:  37 25 12
+centre 4:  81 140 202
+centre 5:  29 66 128
+centre 6:  188 199 191
