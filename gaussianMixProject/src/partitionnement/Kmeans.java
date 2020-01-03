@@ -62,6 +62,15 @@ public class Kmeans implements LearningAlgorithmKmeans {
 		this.numberCentre = centre.length;
 	}
 	
+	// Détruit les positions des centres actuels
+	public void setNumberCentre(int numberCentre) {
+		if (numberCentre <= 0) {
+			throw new IllegalCallerException("Paramètre de setNumberCentre() invalide");
+		}
+		this.numberCentre = numberCentre;
+		this.centre = new double[this.numberCentre][this.dimension];
+	}
+	
 	// Méthodes
 	/**
 	 * @param point1
